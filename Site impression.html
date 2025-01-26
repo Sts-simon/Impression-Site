@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande Impression 3D</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .section {
+            margin: 2rem;
+        }
+        .section h2 {
+            margin-bottom: 1rem;
+        }
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+            padding-bottom: 1rem;
+        }
+        .carousel img {
+            height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        .carousel::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 4px;
+        }
+        .button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 1rem 0;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+        }
+        #popup input, #popup button {
+            display: block;
+            margin: 0.5rem auto;
+            width: calc(100% - 1rem);
+            padding: 0.5rem;
+            max-width: 300px;
+        }
+        #popup .option-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        #popup .option-button {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        #popup .option-button.active {
+            background-color: #007BFF;
+            color: white;
+        }
+        #popup .option-button.inactive {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Commandez vos impressions 3D</h1>
+    </header>
+
+    <main>
+        <!-- Section Avions -->
+        <div class="section" id="avions">
+            <h2>Avions</h2>
+            <div class="carousel">
+                <img src="https://images.cults3d.com/62ESTR6ySAPK0fUq5ANK1WeAfvY=/516x516/filters:no_upscale():format(webp)/https://fbi.cults3d.com/uploaders/38741738/illustration-file/ba73bd28-607a-4dd9-8d11-96098e12f6d5/a350.png" alt="Modèle Avion 1" onclick="openPopup('https://cults3d.com/en/3d-model/game/a350-pour-l-impression')">
+                <img src="https://images.cults3d.com/Yb2WdXm6LVGqbTaL9fS__m6r8UA=/516x516/filters:no_upscale():format(webp)/https://fbi.cults3d.com/uploaders/38741738/illustration-file/dc82e200-0e51-4832-9b88-90a7a303cf2a/a380.png" alt="Modèle Avion 2" onclick="openPopup('https://cults3d.com/en/3d-model/game/a380-pour-l-impression')">
+            </div>
+        </div>
+    </main>
+
+    <!-- Pop-up de commande -->
+    <div id="overlay" onclick="closePopup()"></div>
+    <div id="popup">
+        <h2>Commander une impression 3D</h2>
+        <form id="orderForm" onsubmit="processOrder(event)">
+            <div class="option-buttons">
+                <button type="button" class="option-button active" id="btn-impression" onclick="selectOption('impression')">Impression</button>
+                <button type="button" class="option-button inactive" id="btn-model" onclick="selectOption('model')">Modèle</button>
+            </div>
+            <input type="text" id="name" placeholder="Votre nom" required>
+            <input type="text" id="surname" placeholder="Votre prénom" required>
+            <button type="submit">Valider</button>
+        </form>
+        <button onclick="closePopup()">Fermer</button>
+    </div>
+
+    <script>
+        let selectedModel = "";
+        let orderType = "impression"; // Default selection
+
+        function openPopup(model) {
+            selectedModel = model;
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function selectOption(type) {
+            orderType = type;
+            document.getElementById('btn-impression').classList.toggle('active', type === 'impression');
+            document.getElementById('btn-impression').classList.toggle('inactive', type !== 'impression');
+            document.getElementById('btn-model').classList.toggle('active', type === 'model');
+            document.getElementById('btn-model').classList.toggle('inactive', type !== 'model');
+        }
+
+        function processOrder(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const surname = document.getElementById('surname').value;
+
+            if (orderType === 'model') {
+                window.open(selectedModel, '_blank');
+            } else if (orderType === 'impression') {
+                alert(`Commande envoyée : ${name} ${surname} a commandé une impression pour ${selectedModel}.`);
+                // Ici, vous pouvez ajouter une requête pour envoyer un email via un backend.
+            }
+
+            closePopup();
+        }
+    </script>
+</body>
+</html>
